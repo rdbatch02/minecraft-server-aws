@@ -14,7 +14,7 @@ exports.handler = async function (event: any) {
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/json" },
-        body: JSON.stringify({ message: "Started satisfactory server", response: JSON.stringify(res) })
+        body: JSON.stringify({ message: "Started minecraft server", response: JSON.stringify(res) })
       }
     })
     .catch((err) => {
@@ -22,7 +22,7 @@ exports.handler = async function (event: any) {
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/json" },
-        body: JSON.stringify({ message: "Failed to start satisfactory server", response: JSON.stringify(err) })
+        body: JSON.stringify({ message: "Failed to start minecraft server", response: JSON.stringify(err) })
       }
     });
 }

@@ -35,7 +35,9 @@ while [ $isIdle -le 0 ]; do
     iterations=$((60 / $idleCheckFrequencySeconds * $shutdownIdleMinutes))
     while [ $iterations -gt 0 ]; do
         sleep $idleCheckFrequencySeconds
-        connectionBytes=$(ss -lu | grep 777 | awk -F ' ' '{s+=$2} END {print s}')
+        container_name=mc-server
+        c_pid=$(docker container inspect -f "{{.State.Pid}}" $container_name)
+        connectionBytes=$(nsenter -t $c_pid -n netstat -anp)
         if [ ! -z $connectionBytes ] && [ $connectionBytes -gt 0 ]; then
             isIdle=0
         fi
