@@ -11,9 +11,10 @@ while [ $isIdle -le 0 ]; do
         sleep $idleCheckFrequencySeconds
         container_name=mc-server
         c_pid=$(docker container inspect -f "{{.State.Pid}}" $container_name)
-        activeConnections=$(nsenter -t $c_pid -n netstat -anp | grep 25565 | grep ESTABLISHED | wc -l)
+        activeConnections=$(nsenter -t $c_pid -n netstat -anp | grep 25565 | grep ESTABLISHED | grep -v mc-monitor | wc -l)
         if [ ! -z $activeConnections ] && [ $activeConnections -gt 0 ]; then
             echo "Active Connections: $activeConnections"
+            echo $(nsenter -t $c_pid -n netstat -anp | grep 25565 | grep ESTABLISHED | grep -v mc-monitor)
             isIdle=0            
         fi
         if [ $isIdle -le 0 ] && [ $(($iterations % 21)) -eq 0 ]; then
