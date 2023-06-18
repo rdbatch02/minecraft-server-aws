@@ -25,52 +25,20 @@ sudo chmod -v +x /usr/local/bin/docker-compose
 
 
 # enable auto shutdown: https://github.com/feydan/satisfactory-tools/tree/main/shutdown
-cat << 'EOF' > /home/ec2-user/auto-shutdown.sh
-#!/bin/sh
-
-shutdownIdleMinutes=30
-idleCheckFrequencySeconds=1
-
-isIdle=0
-while [ $isIdle -le 0 ]; do
-    isIdle=1
-    iterations=$((60 / $idleCheckFrequencySeconds * $shutdownIdleMinutes))
-    while [ $iterations -gt 0 ]; do
-        sleep $idleCheckFrequencySeconds
-        container_name=mc-server
-        c_pid=$(docker container inspect -f "{{.State.Pid}}" $container_name)
-        connectionBytes=$(nsenter -t $c_pid -n netstat -anp)
-        if [ ! -z $connectionBytes ] && [ $connectionBytes -gt 0 ]; then
-            isIdle=0
-        fi
-        if [ $isIdle -le 0 ] && [ $(($iterations % 21)) -eq 0 ]; then
-           echo "Activity detected, resetting shutdown timer to $shutdownIdleMinutes minutes."
-           break
-        fi
-        iterations=$(($iterations-1))
-    done
-done
-
-echo "No activity detected for $shutdownIdleMinutes minutes, shutting down."
-sudo shutdown -h now
-EOF
-chmod +x /home/ec2-user/auto-shutdown.sh
-chown ec2-user:ec2-user /home/ec2-user/auto-shutdown.sh
+chmod +x /auto-shutdown.sh
 
 cat << 'EOF' > /etc/systemd/system/auto-shutdown.service
 [Unit]
-Description=Auto shutdown if no one is playing Satisfactory
+Description=Auto shutdown if no one is playing on the server
 After=syslog.target network.target nss-lookup.target network-online.target
 
 [Service]
 Environment="LD_LIBRARY_PATH=./linux64"
-ExecStart=/home/ec2-user/auto-shutdown.sh
-User=ec2-user
-Group=ec2-user
+ExecStart=/auto-shutdown.sh
 StandardOutput=journal
 Restart=on-failure
 KillSignal=SIGINT
-WorkingDirectory=/home/ec2-user
+WorkingDirectory=/
 
 [Install]
 WantedBy=multi-user.target

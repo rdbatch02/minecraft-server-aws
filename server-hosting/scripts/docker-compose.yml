@@ -2,6 +2,7 @@ services:
   mc:
     container_name: mc-server
     image: itzg/minecraft-server
+    restart: unless-stopped
     tty: true
     stdin_open: true
     ports:
