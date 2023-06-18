@@ -92,7 +92,7 @@ chown -R ec2-user:ec2-user /home/ec2-user/mc-server
 cat << EOF > /etc/systemd/system/minecraft.service
 [Unit]
 Description=Minecraft dedicated server
-After=docker.service
+After=docker.service mc\x2ddata.mount
 
 [Service]
 Type=oneshot
