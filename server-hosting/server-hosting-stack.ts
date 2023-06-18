@@ -94,8 +94,7 @@ export class ServerHostingStack extends Stack {
     });
 
     const server = new ec2.Instance(this, `${prefix}Server`, {
-      // 2 vCPU, 8 GB RAM should be enough for most factories
-      instanceType: new ec2.InstanceType("t4g.small"),
+      instanceType: new ec2.InstanceType("t4g.medium"),
       // get exact ami from parameter exported by canonical
       // https://discourse.ubuntu.com/t/finding-ubuntu-images-with-the-aws-ssm-parameter-store/15507
       machineImage: amznLinuxArm64,
@@ -123,7 +122,7 @@ export class ServerHostingStack extends Stack {
     // add aws cli
     // needed to download install script asset and
     // perform backups to s3
-    server.userData.addCommands('sudo apt-get install unzip amazon-efs-utils -y')
+    server.userData.addCommands('sudo yum install unzip amazon-efs-utils -y')
     server.userData.addCommands('curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install')
 
     // package startup script and grant read access to server

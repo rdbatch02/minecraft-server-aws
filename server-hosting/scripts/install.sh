@@ -9,7 +9,8 @@ TIMEZONE=America/New_York
 timedatectl set-timezone $TIMEZONE
 
 sudo mkdir /mc-data
-sudo sudo mount -t efs $EFS_FS_ID:/ /mc-data
+sudo mount -t efs $EFS_FS_ID:/ /mc-data
+sudo chown -R ec2-user:ec2-user /mc-data
 
 amazon-linux-extras install docker -y
 service docker start
